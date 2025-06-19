@@ -1,22 +1,27 @@
-from fastapi import FastAPI
-from providers.provider_registry import get_provider
-from models.request_dtos import EmailRequest, SmsRequest
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from .controllers import router
+from models.custom_exceptions import EmailSendFailure, SmsSendFailure, ProviderNotFound
 
 app = FastAPI()
 
 
-@app.post("/sendMessage/")
-async def sendMessage(request: EmailRequest | SmsRequest):
-    provider = get_provider(request.channel)
-    msg = provider.send(request)
-    return {"message": msg}
+@app.exception_handler(EmailSendFailure)
+async def email_failure_handler(request: Request, exc: EmailSendFailure):
+    return JSONResponse(
+        status_code=502,
+        content={"detail": exc.message},
+    )
 
 
-@app.get("/providers/")
-async def providers():
-    return {"message": "get providers called!"}
+@app.exception_handler(ProviderNotFound)
+async def provider_not_found(request: Request, exc: ProviderNotFound):
+    return JSONResponse(status_code=502, content={"detail": exc.message})
 
 
-@app.get("/health/")
-async def health():
-    return {"message": "get health called!"}
+@app.exception_handler(SmsSendFailure)
+async def sms_failure_handler(request: Request, exc: SmsSendFailure):
+    return JSONResponse(status_code=502, content={"detail": exc.message})
+
+
+app.include_router(router)

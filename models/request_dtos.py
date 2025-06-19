@@ -7,7 +7,6 @@ class ChannelEnum(str, Enum):
     EMAIL = "email"
     SMS = "sms"
 
-
 class BaseRequest(BaseModel):
     channel: ChannelEnum
     tags: Optional[list[str]] = None
