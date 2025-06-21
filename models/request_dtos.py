@@ -11,7 +11,6 @@ class ChannelEnum(str, Enum):
 class BaseRequest(BaseModel):
     channel: ChannelEnum
     tags: Optional[list[str]] = None
-    metadata: Optional[dict] = None
 
 
 class EmailRequest(BaseRequest):

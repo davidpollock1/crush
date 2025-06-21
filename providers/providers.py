@@ -4,6 +4,7 @@ from models.request_dtos import BaseRequest, EmailRequest, SmsRequest
 from models.custom_exceptions import EmailSendFailure, SmsSendFailure
 from services.email_service import send_email
 from models.response_dtos import SendResult, StatusEnum
+from app.logging_config import logging
 
 
 class BaseProvider(ABC):
@@ -16,11 +17,13 @@ class EmailProvider(BaseProvider):
         try:
             await asyncio.to_thread(send_email, request)
             return SendResult(
-                status=StatusEnum.SUCCESS, detail="Successfully sent message."
+                status=StatusEnum.SUCCESS,
+                detail="Successfully sent message.",
+                message_id="1234",
             )
-        except Exception:
-            # logging
-            raise EmailSendFailure("Email send failed. ")
+        except Exception as e:
+            logging.info(f"EmailProvider Send failed. {e}")
+            raise EmailSendFailure(f"Email send failed.{e}")
 
 
 class SmsProvider(BaseProvider):

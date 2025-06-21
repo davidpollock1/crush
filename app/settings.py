@@ -14,3 +14,4 @@ class Settings(BaseSettings):
     SMTP_PORT: str
     SMTP_USERNAME: EmailStr
     SMTP_PASSWORD: str
+    BASE_SENDER_EMAIL_ADDRESS: str

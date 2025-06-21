@@ -15,3 +15,4 @@ class SendMessageResponse(BaseModel):
 class SendResult(BaseModel):
     status: StatusEnum
     detail: Optional[str] = None
+    message_id: Optional[str] = None

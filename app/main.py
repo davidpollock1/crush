@@ -2,8 +2,10 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from .controllers import router
 from models.custom_exceptions import EmailSendFailure, SmsSendFailure, ProviderNotFound
+from .logging_config import logger
 
 app = FastAPI()
+logger.info("Starting the API")
 
 
 @app.exception_handler(EmailSendFailure)
