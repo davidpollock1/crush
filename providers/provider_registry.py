@@ -1,11 +1,11 @@
 from typing import Dict
 from models.request_dtos import ChannelEnum
-from providers.providers import BaseProvider, EmailProvider, SmsProvider
+from providers.providers import BaseProvider, EmailProvider, SlackProvider
 from models.custom_exceptions import ProviderNotFound
 
 _provider_registry: Dict[ChannelEnum, BaseProvider] = {
     ChannelEnum.EMAIL: EmailProvider(),
-    ChannelEnum.SMS: SmsProvider(),
+    ChannelEnum.SLACK: SlackProvider(),
 }
 
 

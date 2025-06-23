@@ -1,8 +1,9 @@
 from abc import ABC
 import asyncio
-from models.request_dtos import BaseRequest, EmailRequest, SmsRequest
-from models.custom_exceptions import EmailSendFailure, SmsSendFailure
+from models.request_dtos import BaseRequest, EmailRequest, SlackRequest
+from models.custom_exceptions import EmailSendFailure, SlackSendFailure
 from services.email_service import send_email
+from services.slack_service import send_slack_message
 from models.response_dtos import SendResult, StatusEnum
 from app.logging_config import logging
 
@@ -15,21 +16,36 @@ class BaseProvider(ABC):
 class EmailProvider(BaseProvider):
     async def send(self, request: EmailRequest) -> SendResult:
         try:
-            await asyncio.to_thread(send_email, request)
-            return SendResult(
-                status=StatusEnum.SUCCESS,
-                detail="Successfully sent message.",
-                message_id="1234",
-            )
+            response = await asyncio.to_thread(send_email, request)
+            send_result = SendResult(status=StatusEnum.PENDING, message_id="1234")
+
+            if not response:
+                send_result.status = StatusEnum.SUCCESS
+            else:
+                send_result.status = StatusEnum.PARTIAL_SUCCESS
+                send_result.detail = response
+
+            return send_result
         except Exception as e:
             logging.info(f"EmailProvider Send failed. {e}")
             raise EmailSendFailure(f"Email send failed.{e}")
 
 
-class SmsProvider(BaseProvider):
-    async def send(self, request: SmsRequest):
+class SlackProvider(BaseProvider):
+    async def send(self, request: SlackRequest):
         try:
-            # call to service to send email
-            pass
-        except Exception:
-            raise SmsSendFailure
+            response = send_slack_message(request)
+
+            send_result = SendResult(status=StatusEnum.PENDING, message_id="1234")
+
+            if response.validate():
+                send_result.status = StatusEnum.SUCCESS
+                send_result.detail = response.get("message")
+            else:
+                send_result.status = StatusEnum.FAILURE
+                send_result.detail = response.get("message")
+
+            return send_result
+        except Exception as e:
+            logging.info(f"SlackProvider Send failed. {e}")
+            raise SlackSendFailure(f"Slack send failed. {e}")

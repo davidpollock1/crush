@@ -5,7 +5,7 @@ from enum import Enum
 
 class ChannelEnum(str, Enum):
     EMAIL = "email"
-    SMS = "sms"
+    SLACK = "slack"
 
 
 class BaseRequest(BaseModel):
@@ -20,7 +20,7 @@ class EmailRequest(BaseRequest):
     body: str
 
 
-class SmsRequest(BaseRequest):
-    to: list[str]
+class SlackRequest(BaseRequest):
+    slack_channel: str
     body: str
-    image: Optional[str] = None
+    bot_username: Optional[str]

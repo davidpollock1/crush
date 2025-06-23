@@ -8,6 +8,6 @@ class EmailSendFailure(Exception):
         self.message = message
 
 
-class SmsSendFailure(Exception):
+class SlackSendFailure(Exception):
     def __init__(self, message: str):
         self.message = message

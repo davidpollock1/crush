@@ -15,3 +15,5 @@ class Settings(BaseSettings):
     SMTP_USERNAME: EmailStr
     SMTP_PASSWORD: str
     BASE_SENDER_EMAIL_ADDRESS: str
+    SLACK_BOT_USER_TOKEN: str
+    SLACK_BOT_DEFAULT_NAME: str

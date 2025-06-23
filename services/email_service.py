@@ -5,7 +5,17 @@ from models.request_dtos import EmailRequest
 from app.settings import get_settings
 
 
-def send_email(email_request: EmailRequest):
+def send_email(email_request: EmailRequest) -> dict:
+    """
+    Sends an email utilizing the smtplib. Settings are to be configured in .env file.
+    Args:
+        EmailRequest: An EmailRequest object containing body, subject, response etc.
+
+    Returns:
+        dict: returns nothing if successful, raises an exception if failure,
+        or a dict with one entry for each recipient that was refused.
+    """
+
     settings = get_settings()
 
     sender = settings.BASE_SENDER_EMAIL_ADDRESS
@@ -36,4 +46,8 @@ def send_email(email_request: EmailRequest):
 
     # utilizing "aiosmtpd -n" for local dev
     with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as smtpObj:
-        smtpObj.sendmail(sender, receivers, msg.as_string())
+        # send mail returns nothing if successful, raises an exception if failure,
+        # or a dict with one entry for each recipient that was refused.
+        result: dict = smtpObj.sendmail(sender, receivers, msg.as_string())
+
+    return result
