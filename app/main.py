@@ -9,7 +9,7 @@ from models.custom_exceptions import (
 from .logging_config import logger
 
 app = FastAPI()
-logger.info("Starting the API")
+logger.info("Starting the API.")
 
 
 @app.exception_handler(EmailSendFailure)
