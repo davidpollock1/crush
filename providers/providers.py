@@ -17,7 +17,7 @@ class EmailProvider(BaseProvider):
     async def send(self, request: EmailRequest) -> SendResult:
         try:
             response = await asyncio.to_thread(send_email, request)
-            send_result = SendResult(status=StatusEnum.PENDING, message_id="1234")
+            send_result = SendResult(status=StatusEnum.PENDING)
 
             if not response:
                 send_result.status = StatusEnum.SUCCESS
@@ -34,9 +34,9 @@ class EmailProvider(BaseProvider):
 class SlackProvider(BaseProvider):
     async def send(self, request: SlackRequest):
         try:
-            response = send_slack_message(request)
+            response = await send_slack_message(request)
 
-            send_result = SendResult(status=StatusEnum.PENDING, message_id="1234")
+            send_result = SendResult(status=StatusEnum.PENDING)
 
             if response.validate():
                 send_result.status = StatusEnum.SUCCESS

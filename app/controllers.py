@@ -7,7 +7,7 @@ router = APIRouter()
 
 
 @router.post("/sendMessage/", response_model=SendMessageResponse)
-async def sendMessage(request: SlackRequest | EmailRequest):
+async def sendMessage(request: EmailRequest | SlackRequest):
     provider = get_provider(request.channel)
     result = await provider.send(request)
     return SendMessageResponse(status=result.status, detail=result.detail)

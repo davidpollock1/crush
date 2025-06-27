@@ -1,12 +1,13 @@
-from slack_sdk import WebClient
+from slack_sdk.web.async_client import AsyncWebClient
 from app.settings import get_settings
 from models.request_dtos import SlackRequest
 
+
 settings = get_settings()
-client = WebClient(token=settings.SLACK_BOT_USER_TOKEN)
+client = AsyncWebClient(token=settings.SLACK_BOT_USER_TOKEN)
 
 
-def send_slack_message(request: SlackRequest):
+async def send_slack_message(request: SlackRequest):
     """
     Sends a message to the slack channel specified in the request using the slack_sdk.
     Args:
@@ -17,7 +18,7 @@ def send_slack_message(request: SlackRequest):
     if not request.bot_username:
         request.bot_username = settings.SLACK_BOT_DEFAULT_NAME
 
-    response = client.chat_postMessage(
+    response = await client.chat_postMessage(
         channel=request.slack_channel, text=request.body, username=request.bot_username
     )
 
