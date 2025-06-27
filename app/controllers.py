@@ -17,8 +17,3 @@ async def sendMessage(request: EmailRequest | SlackRequest):
 async def providers():
     providers = get_providers()
     return {"Providers": providers}
-
-
-@router.get("/health/")
-async def health():
-    return {"Message": "get health called!"}

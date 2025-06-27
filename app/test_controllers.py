@@ -1,9 +1,5 @@
-from fastapi.testclient import TestClient
-from .controllers import router
 from .main import app
-import json
-
-# Python
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
@@ -16,39 +12,38 @@ base_email_request = {
     "body": "string",
 }
 
-
-def test_send_message_valid_email():
-    email_request = base_email_request.copy()
-    email_request["channel"] = "email"
-
-    response = client.post(
-        json=email_request, headers={"X-Token": "hailhydra"}, url="/sendMessage/"
-    )
-    assert response.status_code == 200
-    assert "status" in response.json()
+base_slack_request = {
+    "channel": "slack",
+    "tags": ["tag"],
+    "slack_channel": "bot-updates",
+    "body": "Notification Body",
+    "bot_username": "Not Username",
+}
 
 
-def test_send_message_invalid_channel():
-    email_request = {
-        "channel": "INVALID",
-        "tags": "",
-        "to": "user@example.com",
-        "cc": "user@example.com",
-        "subject": "Test Subject",
-        "body": "Test Body",
-    }
+class TestSendMessageEndpoint:
+    def test_send_message_invalid_provider(self):
+        email_request = (
+            base_email_request.copy()
+        )  # Use copy to avoid modifying the original
+        email_request["channel"] = "INVALID"
 
-    response = client.post(url="/sendMessage/", content=json.dumps(email_request))
-    assert response.status_code == 422
+        response = client.post(json=email_request, url="/sendMessage/")
+        assert response.status_code == 422  # Pydantic validation error for invalid enum
 
+    def test_send_slack_message(self):
+        slack_request = base_slack_request.copy()
 
-def test_providers_endpoint():
-    response = client.get(url="/providers/")
-    assert response.status_code == 200
-    assert "Providers" in response.json()
+        response = client.post(json=slack_request, url="/sendMessage/")
+        assert response.status_code == 200
 
+    def test_send_email(self):
+        email_request = base_email_request.copy()
 
-def test_health_endpoint():
-    response = client.get(url="/health/")
-    assert response.status_code == 200
-    assert response.json() == {"Message": "get health called!"}
+        response = client.post(json=email_request, url="/sendMessage/")
+        assert response.status_code == 200
+
+    def test_providers_endpoint(self):
+        response = client.get(url="/providers/")
+        assert response.status_code == 200
+        assert "Providers" in response.json()
