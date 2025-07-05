@@ -6,14 +6,17 @@ from services.email_service import send_email
 from services.slack_service import send_slack_message
 from models.response_dtos import SendResult, StatusEnum
 from app.logging_config import logging
+from typing import TypeVar, Generic
+
+T = TypeVar("T", bound=BaseRequest)
 
 
-class BaseProvider(ABC):
-    async def send(self, request: BaseRequest):
+class BaseProvider(ABC, Generic[T]):
+    async def send(self, request: T):
         raise NotImplementedError
 
 
-class EmailProvider(BaseProvider):
+class EmailProvider(BaseProvider[EmailRequest]):
     async def send(self, request: EmailRequest) -> SendResult:
         try:
             response = await asyncio.to_thread(send_email, request)
@@ -31,7 +34,7 @@ class EmailProvider(BaseProvider):
             raise EmailSendFailure(f"Email send failed.{e}")
 
 
-class SlackProvider(BaseProvider):
+class SlackProvider(BaseProvider[SlackRequest]):
     async def send(self, request: SlackRequest):
         try:
             response = await send_slack_message(request)
