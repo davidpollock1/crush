@@ -3,11 +3,6 @@ from pydantic import EmailStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-@lru_cache
-def get_settings():
-    return Settings()
-
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=(".env"))
     SMTP_HOST: str
@@ -17,3 +12,8 @@ class Settings(BaseSettings):
     BASE_SENDER_EMAIL_ADDRESS: str
     SLACK_BOT_USER_TOKEN: str
     SLACK_BOT_DEFAULT_NAME: str
+
+
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
