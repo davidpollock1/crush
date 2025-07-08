@@ -21,3 +21,4 @@ jobs:
         run: |
           aiosmtpd -n
           pytest
+            pkill -f aiosmtpd || true
