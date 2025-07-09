@@ -44,10 +44,10 @@ def send_email(email_request: EmailRequest) -> dict:
     part2 = MIMEText(html, "html")
     msg.attach(part2)
 
-    # utilizing "aiosmtpd -n" for local dev
-    with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as smtpObj:
-        # sendmail returns nothing if successful, raises an exception if failure,
-        # or a dict with one entry for each recipient that was refused.
-        result: dict = smtpObj.sendmail(sender, receivers, msg.as_string())
+    # # utilizing "aiosmtpd -n" for local dev
+    # with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as smtpObj:
+    #     # sendmail returns nothing if successful, raises an exception if failure,
+    #     # or a dict with one entry for each recipient that was refused.
+    #     result: dict = smtpObj.sendmail(sender, receivers, msg.as_string())
 
-    return result
+    # return result
