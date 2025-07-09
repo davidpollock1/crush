@@ -19,6 +19,4 @@ jobs:
 
       - name: run tests
         run: |
-          aiosmtpd -n
           pytest
-            pkill -f aiosmtpd || true
