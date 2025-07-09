@@ -1,0 +1,6 @@
+smtp_host = "localhost"
+smtp_port = 8025
+smtp_username = "example@gmail.com"
+smtp_password = "app-specific-password"
+base_send_email_address = "exampleEmail@ex81.com"
+slack_bot_default_name = "CRUSH-BOT"

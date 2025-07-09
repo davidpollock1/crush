@@ -18,7 +18,7 @@ def send_email(email_request: EmailRequest) -> dict:
 
     settings = get_settings()
 
-    sender = settings.BASE_SENDER_EMAIL_ADDRESS
+    sender = settings.base_send_email_address
 
     receivers = [email_request.to, email_request.cc]
     subject = email_request.subject
@@ -43,6 +43,8 @@ def send_email(email_request: EmailRequest) -> dict:
 
     part2 = MIMEText(html, "html")
     msg.attach(part2)
+
+    return {}
 
     # # utilizing "aiosmtpd -n" for local dev
     # with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as smtpObj:

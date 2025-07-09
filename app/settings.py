@@ -1,20 +1,24 @@
+import tomli
 from functools import lru_cache
-from pydantic import EmailStr
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Settings(BaseSettings):
-    SMTP_HOST: str
-    SMTP_PORT: str
-    SMTP_USERNAME: EmailStr
-    SMTP_PASSWORD: str
-    BASE_SENDER_EMAIL_ADDRESS: str
-    SLACK_BOT_USER_TOKEN: str
-    SLACK_BOT_DEFAULT_NAME: str
-
-    model_config = SettingsConfigDict(env_file=(".env"))
+    smtp_host: str
+    smtp_port: int
+    smtp_username: str
+    smtp_password: str
+    base_send_email_address: str
+    slack_bot_default_name: str
+    slack_bot_user_token: str | None = os.environ.get("SLACK_BOT_USER_TOKEN")
 
 
 @lru_cache
-def get_settings() -> Settings:
-    return Settings()
+def get_settings(path: str = "config.toml") -> Settings:
+    with open(path, "rb") as f:
+        data = tomli.load(f)
+    return Settings(**data)

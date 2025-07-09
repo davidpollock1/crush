@@ -4,7 +4,7 @@ from models.request_dtos import SlackRequest
 
 
 settings = get_settings()
-client = AsyncWebClient(token=settings.SLACK_BOT_USER_TOKEN)
+client = AsyncWebClient(token=settings.slack_bot_user_token)
 
 
 async def send_slack_message(request: SlackRequest):
@@ -16,7 +16,7 @@ async def send_slack_message(request: SlackRequest):
     Returns: A SlackResponse object from the slack_sdk.
     """
     if not request.bot_username:
-        request.bot_username = settings.SLACK_BOT_DEFAULT_NAME
+        request.bot_username = settings.slack_bot_default_name
 
     response = await client.chat_postMessage(
         channel=request.slack_channel, text=request.body, username=request.bot_username
